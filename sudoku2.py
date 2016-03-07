@@ -5,13 +5,13 @@ import copy
 import time
 from readproblem import read_problem
 
-#Êı¶ÀÇó½â³ÌĞò
-# lProblem:Êı¶ÀÎÊÌâ£¬ÓÉÒ»¸ö¶şÎ¬Êı×é±íÊ¾
-# logFile: ÈÕÖ¾ÎÄ¼ş£¬½«Çó½â½á¹ûÊä³öµ½Õâ¸öÎÄ¼şÖĞ   
+#æ•°ç‹¬æ±‚è§£ç¨‹åº
+# lProblem:æ•°ç‹¬é—®é¢˜ï¼Œç”±ä¸€ä¸ªäºŒç»´æ•°ç»„è¡¨ç¤º
+# logFile: æ—¥å¿—æ–‡ä»¶ï¼Œå°†æ±‚è§£ç»“æœè¾“å‡ºåˆ°è¿™ä¸ªæ–‡ä»¶ä¸­
 def sudoku_solver(lProblem):
     lSolverStack=[lProblem]
     count=0
-    # Èô¶ÑÕ»²»Îª¿Õ£¬ÔòÑ­»·
+    # è‹¥å †æ ˆä¸ä¸ºç©ºï¼Œåˆ™å¾ªç¯
     while len(lSolverStack)>0:
         lCurrSolution=lSolverStack.pop()
         count=count+1
@@ -20,73 +20,73 @@ def sudoku_solver(lProblem):
             for number in row:
                 outLine=outLine + "%d" % number +' '
         isResult=True
-        #ÓÃÓÚ´æ·Åµ±Ç°×îÉÙºòÑ¡ÊıÁĞ±í
+        #ç”¨äºå­˜æ”¾å½“å‰æœ€å°‘å€™é€‰æ•°åˆ—è¡¨
         lMinAvailableNumber=range(1,10)
-        #µ±Ç°×îÉÙºòÑ¡ÊıËùÔÚÎ»ÖÃ
+        #å½“å‰æœ€å°‘å€™é€‰æ•°æ‰€åœ¨ä½ç½®
         lMinAvailableNumberX=0
         lMinAvailableNumberY=0
-       
+
         for idx in range(81):
             i=idx%9
-            j=idx/9
+            j=idx//9
             if lCurrSolution[i][j]==0:
                 isResult=False
-                #¼ÆËãµ±Ç°Î»ÖÃ¿ÉÒÔ·ÅÖÃµÄÊı×ÖÁĞ±í
-                lCurrAvailableNumber=range(1,10)
-                #Èç¹ûÍ¬Ò»ĞĞÖĞ´æÔÚÏàÍ¬ÔªËØ£¬ÔòÅÅ³ı
+                #è®¡ç®—å½“å‰ä½ç½®å¯ä»¥æ”¾ç½®çš„æ•°å­—åˆ—è¡¨
+                lCurrAvailableNumber=[i for i in range(1,10)]
+                #å¦‚æœåŒä¸€è¡Œä¸­å­˜åœ¨ç›¸åŒå…ƒç´ ï¼Œåˆ™æ’é™¤
                 for x in range(9):
                     if lCurrAvailableNumber.count(lCurrSolution[i][x])>0:
                         lCurrAvailableNumber.remove(lCurrSolution[i][x])
-                #Èç¹ûÍ¬Ò»ÁĞÖĞ´æÔÚÏàÍ¬ÔªËØ£¬ÔòÅÅ³ı
+                #å¦‚æœåŒä¸€åˆ—ä¸­å­˜åœ¨ç›¸åŒå…ƒç´ ï¼Œåˆ™æ’é™¤
                 for y in range(9):
                     if lCurrAvailableNumber.count(lCurrSolution[y][j])>0:
                         lCurrAvailableNumber.remove(lCurrSolution[y][j])
-                #Èç¹ûµ±Ç°Î»ÖÃËùÔÚµÄĞ¡¾Å¹¬¸ñÖĞ´æÔÚÏàÍ¬ÔªËØ£¬ÔòÅÅ³ı
-                for x in range(i/3*3,i/3*3+3):
-                    for y in range(j/3*3,j/3*3+3):
+                #å¦‚æœå½“å‰ä½ç½®æ‰€åœ¨çš„å°ä¹å®«æ ¼ä¸­å­˜åœ¨ç›¸åŒå…ƒç´ ï¼Œåˆ™æ’é™¤
+                for x in range(i//3*3,i//3*3+3):
+                    for y in range(j//3*3,j//3*3+3):
                         if lCurrAvailableNumber.count(lCurrSolution[x][y])>0:
                             lCurrAvailableNumber.remove(lCurrSolution[x][y])
-                #Èç¹ûµ±Ç°µ¥Ôª¸ñÖĞ¿ÉÑ¡Êı×Ö¸öÊı×îÉÙ£¬Ôò±£Áô           
+                #å¦‚æœå½“å‰å•å…ƒæ ¼ä¸­å¯é€‰æ•°å­—ä¸ªæ•°æœ€å°‘ï¼Œåˆ™ä¿ç•™
                 if len(lCurrAvailableNumber)<len(lMinAvailableNumber):
                     lMinAvailableNumber=copy.deepcopy(lCurrAvailableNumber)
                     lMinAvailableNumberX=i
                     lMinAvailableNumberY=j
-               
+
                 if len(lMinAvailableNumber)==0:
                     break
-               
-        #Èôµ±Ç°Î»ÖÃ´æÔÚ¿ÉÑ¡Êı×Ö£¬Ôò½«µ±Ç°Î»ÖÃµÄËùÓĞ¿ÉÑ¡Êı×Ö£¬ÒÀ´Î×÷ÎªÁÙÊ±½â£¬²¢´æÈë¶ÑÕ»
+
+        #è‹¥å½“å‰ä½ç½®å­˜åœ¨å¯é€‰æ•°å­—ï¼Œåˆ™å°†å½“å‰ä½ç½®çš„æ‰€æœ‰å¯é€‰æ•°å­—ï¼Œä¾æ¬¡ä½œä¸ºä¸´æ—¶è§£ï¼Œå¹¶å­˜å…¥å †æ ˆ
         if len(lMinAvailableNumber)>0:
             for number in lMinAvailableNumber:
                 lNewSolution=copy.deepcopy(lCurrSolution)
                 lNewSolution[lMinAvailableNumberX][lMinAvailableNumberY]=number
-                lSolverStack.append(lNewSolution)       
-               
+                lSolverStack.append(lNewSolution)
+
         if isResult:
             return lCurrSolution
     return []
 
 def showsudoku(s):
-        """´òÓ¡¾ØÕó"""
+        """æ‰“å°çŸ©é˜µ"""
         for row in s:
             outLine=''
             for number in row:
                 outLine=outLine + "%d" % number +' '
-            print(outLine)  
-       
+            print(outLine)
+
 if __name__ == '__main__':
     lProblemList=read_problem('Sudoku_input.txt')
     count=0
-    print "Start solving.."
+    print("Start solving..")
     for lProblem in lProblemList:
         count=count+1
         startTime=time.time()
         lResult=sudoku_solver(lProblem)
         endTime=time.time()
         useTime=endTime-startTime
-        print "  Problem " + "%d" % count + ": finished!\nTime consuming: " + "%.4f" %useTime + " Seconds\n"
+        print ("  Problem " + "%d" % count + ": finished!\nTime consuming: " + "%.4f" %useTime + " Seconds\n")
         if len(lResult)==0:
             print("No Answer...")
         else:
             showsudoku(lResult)
-    print "Done!!"
+    print("Done!!")

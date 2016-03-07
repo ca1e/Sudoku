@@ -5,29 +5,29 @@ import copy
 from readproblem import read_problem
 
 class Matrix(list):
-    """¾ØÕóÀà£¬Ö÷ÒªÔÚlistµÄ»ù´¡ÉÏÊµÏÖget_row,get_colµÈ¹¦ÄÜ"""
+    """çŸ©é˜µç±»ï¼Œä¸»è¦åœ¨listçš„åŸºç¡€ä¸Šå®ç°get_row,get_colç­‰åŠŸèƒ½"""
 
     def get_grid(self,x,y,with_zero = False):
-        """»ñÈ¡ÔªËØËùÔÚĞ¡¾Å¹¬¸ñÀïËùÓĞµÄÊı×Ö"""
+        """è·å–å…ƒç´ æ‰€åœ¨å°ä¹å®«æ ¼é‡Œæ‰€æœ‰çš„æ•°å­—"""
         g = lambda x:x-(x)%3
         x,y = g(x),g(y)
         if with_zero:
             return [b[a] for b in self[y:y+3] for a in range(x,x+3)]
         else:
             return [b[a] for b in self[y:y+3] for a in range(x,x+3) if not b[a] == 0]
- 
+
     def get_row(self, y):
         return self[y]
- 
+
     def get_col(self, x):
         return [a[x] for a in self]
- 
+
     def rows(self):
         for y in range(0,9):
             yield self[y]
 
     def display(self):
-        """´òÓ¡¾ØÕó"""
+        """æ‰“å°çŸ©é˜µ"""
         for l in self:
             outLine=''
             for number in l:
@@ -45,7 +45,7 @@ class Soduku(object):
         self.snapshot = []
         self.create_cand()
     def loop(self):
-        """±éÀúÒ»±é¾ØÕó£¬½«¿ÉÒÔÈ·¶¨µÄÖµÌîĞ´£¬¼´ÏÔÊ½Î¨Ò»·¨"""
+        """éå†ä¸€éçŸ©é˜µï¼Œå°†å¯ä»¥ç¡®å®šçš„å€¼å¡«å†™ï¼Œå³æ˜¾å¼å”¯ä¸€æ³•"""
         for y,row in enumerate(self.candidacy):
             for x,col in enumerate(row):
                 if type(col) == set and len(col) == 1:
@@ -53,9 +53,9 @@ class Soduku(object):
                     self.candidacy[y][x] = 0
                     self.update_cand()
         self.update_cand()
- 
+
     def create_cand(self):
-        """´´½¨ºòÑ¡Êı¾ØÕó"""
+        """åˆ›å»ºå€™é€‰æ•°çŸ©é˜µ"""
         for y,row in enumerate(self.arr):
             for x,col in enumerate(row):
                 if col == 0:
@@ -63,9 +63,9 @@ class Soduku(object):
                     self.candidacy[y][x] = result
                 else:
                     self.candidacy[y][x] = 0
- 
+
     def update_cand(self):
-        """¸üĞÂºòÑ¡Êı¾ØÕó"""
+        """æ›´æ–°å€™é€‰æ•°çŸ©é˜µ"""
         for y,row in enumerate(self.candidacy):
             for x,col in enumerate(row):
                 if type(col) == set:
@@ -75,37 +75,37 @@ class Soduku(object):
                     else:
                         self.candidacy[y][x] = 0
     def search_available(self, x ,y):
-        """¼ì²éx,y¶ÔÓ¦µÄÎ»ÖÃµÄËùÓĞ¿ÉÌîµÄÊı×Ö"""
+        """æ£€æŸ¥x,yå¯¹åº”çš„ä½ç½®çš„æ‰€æœ‰å¯å¡«çš„æ•°å­—"""
         set_a = self.ref.difference(self.arr.get_row(y))
         set_b = self.ref.difference(self.arr.get_col(x))
         set_c = self.ref.difference(self.arr.get_grid(x,y))
         return set_a.intersection(set_b,set_c)
- 
+
     def search_unique(self):
-        """ÒşÊ½Î¨Ò»·¨É¨Ãè"""
-        #°´ĞĞÉ¨Ãè
+        """éšå¼å”¯ä¸€æ³•æ‰«æ"""
+        #æŒ‰è¡Œæ‰«æ
         for y in range(0,9):
             num = self.count(*self.candidacy[y])
             if num:
                 self.arr[y][num[1]] = num[0]
                 self.candidacy[y][num[1]] = 0
                 self.update_cand()
-        #°´ÁĞÉ¨Ãè
+        #æŒ‰åˆ—æ‰«æ
         for x in range(0,9):
             num = self.count(*self.candidacy.get_col(x))
             if num:
                 self.arr[num[1]][x] = num[0]
                 self.candidacy[num[1]][x] = 0
                 self.update_cand()
-        #°´¹¬¸ñÉ¨Ãè
+        #æŒ‰å®«æ ¼æ‰«æ
         for x,y in self.grid_ref:
             num = self.count(*self.candidacy.get_grid(x,y,with_zero=True))
             if num:
-                self.arr[y+num[1]/3][x+num[1]%3] = num[0]
-                self.candidacy[y+num[1]/3][x+num[1]%3] = 0
+                self.arr[y+num[1]//3][x+num[1]%3] = num[0]
+                self.candidacy[y+num[1]//3][x+num[1]%3] = 0
                 self.update_cand()
     def count(self,*args):
-        """Í³¼ÆÖ»³öÏÖÒ»´ÎµÄÊı×Ö£¬·µ»ØÊı×Ö±¾Éí¼°ÆäÎ»ÖÃ"""
+        """ç»Ÿè®¡åªå‡ºç°ä¸€æ¬¡çš„æ•°å­—ï¼Œè¿”å›æ•°å­—æœ¬èº«åŠå…¶ä½ç½®"""
         l = []
         for i,d in enumerate(args):
             if type(d) == set:
@@ -118,14 +118,14 @@ class Soduku(object):
         return 0
 
     def is_complete(self):
-        """¼ì²éÓĞÃ»ÓĞÎ´Ìî¸ñ×Ó"""
+        """æ£€æŸ¥æœ‰æ²¡æœ‰æœªå¡«æ ¼å­"""
         for y in self.arr:
             for x in y:
                 if x == 0:  return False
         return True
 
     def is_right(self):
-        """°´ĞĞ¡¢ÁĞ¡¢¹¬¸ñÉ¨Ãè£¬¼ì²éÊÇ·ñ¶¼°üº¬1-9¾Å¸öÊı×Ö"""
+        """æŒ‰è¡Œã€åˆ—ã€å®«æ ¼æ‰«æï¼Œæ£€æŸ¥æ˜¯å¦éƒ½åŒ…å«1-9ä¹ä¸ªæ•°å­—"""
         for y in self.arr:
             if not set(y) == self.ref:
                 return False
@@ -138,13 +138,13 @@ class Soduku(object):
         return True
 
     def has_error(self):
-        """ÅĞ¶Ïµ±Ç°×´Ì¬ÓĞÃ»ÓĞ´íÎó"""
+        """åˆ¤æ–­å½“å‰çŠ¶æ€æœ‰æ²¡æœ‰é”™è¯¯"""
         tmp = []
-        #µ±Ä³Ò»Î´ÌîµÄ¸ñ×ÓÏàÓ¦µÄºòÑ¡ÊıÒ²²»´æÔÚÊ±£¬ÈÏ¶¨ÎªÓĞ´íÎó
+        #å½“æŸä¸€æœªå¡«çš„æ ¼å­ç›¸åº”çš„å€™é€‰æ•°ä¹Ÿä¸å­˜åœ¨æ—¶ï¼Œè®¤å®šä¸ºæœ‰é”™è¯¯
         for y in range(0,9):
             for x in range(0,9):
                 if self.arr[y][x] == 0 and self.candidacy[y][x] == 0:   return True
-        #É¨Ãè¼ì²éĞĞ¡¢ÁĞÓĞÃ»ÓĞÖØ¸´Öµ
+        #æ‰«ææ£€æŸ¥è¡Œã€åˆ—æœ‰æ²¡æœ‰é‡å¤å€¼
         for y in range(0,9):
             for element in self.arr[y]:
                 if element and element in tmp:
@@ -161,7 +161,7 @@ class Soduku(object):
 
     def resolve(self):
         while self.arr != self.snapshot:
-            #Ã¿´ÎÎª¾ØÕóÉú³ÉÒ»´Î¿ìÕÕ
+            #æ¯æ¬¡ä¸ºçŸ©é˜µç”Ÿæˆä¸€æ¬¡å¿«ç…§
             self.snapshot = copy.deepcopy(self.arr)
             self.loop()
             self.search_unique()
@@ -182,8 +182,8 @@ class SodukuStack(object):
             try:
                 self.foward()
             except IndexError:
-                if self.deep > 0: 
-                    #³¢ÊÔËùÓĞ¿ÉÄÜºó£¬Ö±½Ó»Ø¹ö²»×ö¼ì²é
+                if self.deep > 0:
+                    #å°è¯•æ‰€æœ‰å¯èƒ½åï¼Œç›´æ¥å›æ»šä¸åšæ£€æŸ¥
                     self.rollback()
                     continue
                 else:
@@ -193,25 +193,25 @@ class SodukuStack(object):
                 self.rollback()
 
     def foward(self):
-        """³¢ÊÔÒ»¸ö¿ÉÄÜµÄÊı×Ö"""
+        """å°è¯•ä¸€ä¸ªå¯èƒ½çš„æ•°å­—"""
         x,y = self.candidacy[self.deep]['position']
         newarr = copy.deepcopy(self.current.arr)
         newarr[y][x] = self.candidacy[self.deep]['candidacy'].pop()
         self.stack.append(Soduku(newarr))
         self.deep += 1
-        self.current = self.stack[self.deep] 
+        self.current = self.stack[self.deep]
         self.current.resolve()
         self.candidacy.append(self.padding(self.current))
 
     def rollback(self):
-        """»Ø¹ö£¬»Ö¸´Î´³¢ÊÔµÄ×´Ì¬"""
+        """å›æ»šï¼Œæ¢å¤æœªå°è¯•çš„çŠ¶æ€"""
         self.stack.pop()
         self.candidacy.pop()
         self.deep -= 1
         self.current = self.stack[self.deep]
-    
+
     def padding(self, obj):
-        """»ñµÃ¿ÉÓÃµÄÌî³äºòÑ¡Êı¼°ÆäÎ»ÖÃ"""
+        """è·å¾—å¯ç”¨çš„å¡«å……å€™é€‰æ•°åŠå…¶ä½ç½®"""
         for py,y in enumerate(obj.candidacy):
             for px,x in enumerate(y):
                 if x:
@@ -219,13 +219,13 @@ class SodukuStack(object):
                     return {
                         'candidacy': candidacy,
                         'position': (px,py)
-                    }       
+                    }
 
 
 if __name__ == "__main__":
     lProblemList=read_problem('Sudoku_input.txt')
     count=0
-    print "Start solving.."
+    print("Start solving..")
     for lProblem in lProblemList:
         count=count+1
         startTime=time.time()
@@ -235,9 +235,9 @@ if __name__ == "__main__":
         sodu.resolve()
         endTime=time.time()
         useTime=endTime-startTime
-        print "  Problem " + "%d" % count + ": finished!\nTime consuming: " + "%.4f" %useTime + " Seconds\n"
+        print ("  Problem " + "%d" % count + ": finished!\nTime consuming: " + "%.4f" %useTime + " Seconds\n")
         if not sodu.current.is_right():
             print("No Answer...")
         else:
             sodu.current.arr.display()
-    print "Done!!"      
+    print("Done!!")
