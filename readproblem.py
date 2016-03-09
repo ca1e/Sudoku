@@ -1,16 +1,19 @@
 #encoding=utf-8
 import copy
 
-#从文件中读取数独问题，每题之间用";"分隔,各数字之间用空格分隔
+#浠庢枃浠朵腑璇诲彇鏁扮嫭闂锛屾瘡棰樹箣闂寸敤";"鍒嗛殧,鍚勬暟瀛椾箣闂寸敤绌烘牸鍒嗛殧
 ignorechar=('#')
-
-def read_problem(filename):
+def fread_problem(filename):
     inputFile=open(filename,'r')
+    ls=inputFile.readlines()
+    return read_problem(ls)
+    
+def read_problem(lines):
     rtnList=[]
     lP=[]
     ignor=False
-    while True:
-        line=inputFile.readline()
+    ###
+    for line in lines:
         line=line.strip()
         if len(line) == 0:
             break
@@ -37,7 +40,7 @@ def read_problem(filename):
             rtnList.append(copy.deepcopy(lP))
             lP=[]
             continue
-            
+        ###
         rowList=line.split(' ')
         numberList=[]
         for number in rowList:
@@ -49,4 +52,5 @@ def read_problem(filename):
                 continue
         if len(numberList)==9:
             lP.append(numberList)
+
     return rtnList

@@ -2,7 +2,7 @@
 #encoding=utf-8
 import time
 import copy
-from readproblem import read_problem
+from readproblem import fread_problem
 
 class Matrix(list):
     """矩阵类，主要在list的基础上实现get_row,get_col等功能"""
@@ -28,9 +28,9 @@ class Matrix(list):
 
     def display(self):
         """打印矩阵"""
-        for l in self:
+        for row in self:
             outLine=''
-            for number in l:
+            for number in row:
                 outLine=outLine + "%d" % number +' '
             print(outLine)
 
@@ -221,17 +221,14 @@ class SodukuStack(object):
                         'position': (px,py)
                     }
 
-
 if __name__ == "__main__":
-    lProblemList=read_problem('Sudoku_input.txt')
+    lProblemList=fread_problem('Sudoku_input.txt')
     count=0
     print("Start solving..")
     for lProblem in lProblemList:
         count=count+1
         startTime=time.time()
-        array1 = Matrix(lProblem)
-        #array1.display()
-        sodu = SodukuStack(array1)
+        sodu=SodukuStack(lProblem)
         sodu.resolve()
         endTime=time.time()
         useTime=endTime-startTime
